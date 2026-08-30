@@ -17,8 +17,8 @@ a lista de adjacência, o heap do Dijkstra, etc.
 
 ## Links dos Videos
    part1 : Guilherme - https://drive.google.com/file/d/1D2pn8E5FgVXdfr6gik6e2kwqgwmS564n/view?usp=sharing
-   part2 : Ytallo -  
-   part3 : Lucas  - https://drive.google.com/file/d/1FtV3TgiFlQhfHgehP6n3N61sV-WysNa2/view?usp=sharing
+   part2 : Ytallo    - https://drive.google.com/drive/folders/1M6hpfuCMbNkaOtEQv5Wn1T7uTTis38KF
+   part3 : Lucas     - https://drive.google.com/file/d/1FtV3TgiFlQhfHgehP6n3N61sV-WysNa2/view?usp=sharing
 
 
 ## Requisitos para compilar
