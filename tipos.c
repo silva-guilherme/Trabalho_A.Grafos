@@ -1,0 +1,101 @@
+#include <string.h>
+#include <strings.h>
+#include "tipos.h"
+
+static const char* NOMES[NUM_TIPOS] = {
+    "NORMAL", "FOGO", "AGUA", "GRAMA", "ELETRICO", "GELO", "LUTADOR",
+    "VENENOSO", "TERRA", "VOADOR", "PSIQUICO", "INSETO", "PEDRA",
+    "FANTASMA", "DRAGAO", "SOMBRIO", "ACO", "FADA"
+};
+
+const char* Tipo_nome(TipoPokemon t) { return NOMES[t]; }
+
+TipoPokemon Tipo_from_string(const char* nome) {
+    for (int i = 0; i < NUM_TIPOS; i++) {
+        if (strcasecmp(nome, NOMES[i]) == 0) return (TipoPokemon)i;
+    }
+    return TIPO_NORMAL; // se digitar errado no arquivo, cai aqui
+}
+
+typedef struct { TipoPokemon atacante, defensor; double mult; } Excecao;
+
+// só as excecoes (o que nao ta aqui é neutro = 1.0). tabela baseada no jogo original,
+// separada por bloco de tipo atacante pra ficar mais facil de achar
+static const Excecao TABELA[] = {
+
+    {TIPO_NORMAL, TIPO_PEDRA, 0.5}, {TIPO_NORMAL, TIPO_ACO, 0.5}, {TIPO_NORMAL, TIPO_FANTASMA, 0.0},
+
+    {TIPO_FOGO, TIPO_GRAMA, 2.0}, {TIPO_FOGO, TIPO_GELO, 2.0}, {TIPO_FOGO, TIPO_INSETO, 2.0}, {TIPO_FOGO, TIPO_ACO, 2.0},
+    {TIPO_FOGO, TIPO_FOGO, 0.5}, {TIPO_FOGO, TIPO_AGUA, 0.5}, {TIPO_FOGO, TIPO_PEDRA, 0.5}, {TIPO_FOGO, TIPO_DRAGAO, 0.5},
+
+    {TIPO_AGUA, TIPO_FOGO, 2.0}, {TIPO_AGUA, TIPO_TERRA, 2.0}, {TIPO_AGUA, TIPO_PEDRA, 2.0},
+    {TIPO_AGUA, TIPO_AGUA, 0.5}, {TIPO_AGUA, TIPO_GRAMA, 0.5}, {TIPO_AGUA, TIPO_DRAGAO, 0.5},
+
+    {TIPO_GRAMA, TIPO_AGUA, 2.0}, {TIPO_GRAMA, TIPO_TERRA, 2.0}, {TIPO_GRAMA, TIPO_PEDRA, 2.0},
+    {TIPO_GRAMA, TIPO_FOGO, 0.5}, {TIPO_GRAMA, TIPO_GRAMA, 0.5}, {TIPO_GRAMA, TIPO_VENENOSO, 0.5},
+    {TIPO_GRAMA, TIPO_VOADOR, 0.5}, {TIPO_GRAMA, TIPO_INSETO, 0.5}, {TIPO_GRAMA, TIPO_DRAGAO, 0.5}, {TIPO_GRAMA, TIPO_ACO, 0.5},
+
+    {TIPO_ELETRICO, TIPO_AGUA, 2.0}, {TIPO_ELETRICO, TIPO_VOADOR, 2.0},
+    {TIPO_ELETRICO, TIPO_GRAMA, 0.5}, {TIPO_ELETRICO, TIPO_ELETRICO, 0.5}, {TIPO_ELETRICO, TIPO_DRAGAO, 0.5},
+    {TIPO_ELETRICO, TIPO_TERRA, 0.0},
+
+    {TIPO_GELO, TIPO_GRAMA, 2.0}, {TIPO_GELO, TIPO_TERRA, 2.0}, {TIPO_GELO, TIPO_VOADOR, 2.0}, {TIPO_GELO, TIPO_DRAGAO, 2.0},
+    {TIPO_GELO, TIPO_FOGO, 0.5}, {TIPO_GELO, TIPO_AGUA, 0.5}, {TIPO_GELO, TIPO_GELO, 0.5}, {TIPO_GELO, TIPO_ACO, 0.5},
+
+    {TIPO_LUTADOR, TIPO_NORMAL, 2.0}, {TIPO_LUTADOR, TIPO_GELO, 2.0}, {TIPO_LUTADOR, TIPO_PEDRA, 2.0},
+    {TIPO_LUTADOR, TIPO_SOMBRIO, 2.0}, {TIPO_LUTADOR, TIPO_ACO, 2.0},
+    {TIPO_LUTADOR, TIPO_VENENOSO, 0.5}, {TIPO_LUTADOR, TIPO_VOADOR, 0.5}, {TIPO_LUTADOR, TIPO_PSIQUICO, 0.5},
+    {TIPO_LUTADOR, TIPO_INSETO, 0.5}, {TIPO_LUTADOR, TIPO_FADA, 0.5}, {TIPO_LUTADOR, TIPO_FANTASMA, 0.0},
+
+    {TIPO_VENENOSO, TIPO_GRAMA, 2.0}, {TIPO_VENENOSO, TIPO_FADA, 2.0},
+    {TIPO_VENENOSO, TIPO_VENENOSO, 0.5}, {TIPO_VENENOSO, TIPO_TERRA, 0.5}, {TIPO_VENENOSO, TIPO_PEDRA, 0.5},
+    {TIPO_VENENOSO, TIPO_FANTASMA, 0.5}, {TIPO_VENENOSO, TIPO_ACO, 0.0},
+
+    {TIPO_TERRA, TIPO_FOGO, 2.0}, {TIPO_TERRA, TIPO_ELETRICO, 2.0}, {TIPO_TERRA, TIPO_VENENOSO, 2.0},
+    {TIPO_TERRA, TIPO_PEDRA, 2.0}, {TIPO_TERRA, TIPO_ACO, 2.0},
+    {TIPO_TERRA, TIPO_GRAMA, 0.5}, {TIPO_TERRA, TIPO_INSETO, 0.5}, {TIPO_TERRA, TIPO_VOADOR, 0.0},
+
+    {TIPO_VOADOR, TIPO_GRAMA, 2.0}, {TIPO_VOADOR, TIPO_LUTADOR, 2.0}, {TIPO_VOADOR, TIPO_INSETO, 2.0},
+    {TIPO_VOADOR, TIPO_ELETRICO, 0.5}, {TIPO_VOADOR, TIPO_PEDRA, 0.5}, {TIPO_VOADOR, TIPO_ACO, 0.5},
+
+    {TIPO_PSIQUICO, TIPO_LUTADOR, 2.0}, {TIPO_PSIQUICO, TIPO_VENENOSO, 2.0},
+    {TIPO_PSIQUICO, TIPO_PSIQUICO, 0.5}, {TIPO_PSIQUICO, TIPO_ACO, 0.5}, {TIPO_PSIQUICO, TIPO_SOMBRIO, 0.0},
+
+    {TIPO_INSETO, TIPO_GRAMA, 2.0}, {TIPO_INSETO, TIPO_PSIQUICO, 2.0}, {TIPO_INSETO, TIPO_SOMBRIO, 2.0},
+    {TIPO_INSETO, TIPO_FOGO, 0.5}, {TIPO_INSETO, TIPO_LUTADOR, 0.5}, {TIPO_INSETO, TIPO_VENENOSO, 0.5},
+    {TIPO_INSETO, TIPO_VOADOR, 0.5}, {TIPO_INSETO, TIPO_FANTASMA, 0.5}, {TIPO_INSETO, TIPO_ACO, 0.5}, {TIPO_INSETO, TIPO_FADA, 0.5},
+
+    {TIPO_PEDRA, TIPO_FOGO, 2.0}, {TIPO_PEDRA, TIPO_GELO, 2.0}, {TIPO_PEDRA, TIPO_VOADOR, 2.0}, {TIPO_PEDRA, TIPO_INSETO, 2.0},
+    {TIPO_PEDRA, TIPO_LUTADOR, 0.5}, {TIPO_PEDRA, TIPO_TERRA, 0.5}, {TIPO_PEDRA, TIPO_ACO, 0.5},
+
+    {TIPO_FANTASMA, TIPO_PSIQUICO, 2.0}, {TIPO_FANTASMA, TIPO_FANTASMA, 2.0},
+    {TIPO_FANTASMA, TIPO_SOMBRIO, 0.5}, {TIPO_FANTASMA, TIPO_NORMAL, 0.0},
+
+    {TIPO_DRAGAO, TIPO_DRAGAO, 2.0}, {TIPO_DRAGAO, TIPO_ACO, 0.5}, {TIPO_DRAGAO, TIPO_FADA, 0.0},
+
+    {TIPO_SOMBRIO, TIPO_PSIQUICO, 2.0}, {TIPO_SOMBRIO, TIPO_FANTASMA, 2.0},
+    {TIPO_SOMBRIO, TIPO_LUTADOR, 0.5}, {TIPO_SOMBRIO, TIPO_SOMBRIO, 0.5}, {TIPO_SOMBRIO, TIPO_FADA, 0.5},
+
+    {TIPO_ACO, TIPO_GELO, 2.0}, {TIPO_ACO, TIPO_PEDRA, 2.0}, {TIPO_ACO, TIPO_FADA, 2.0},
+    {TIPO_ACO, TIPO_FOGO, 0.5}, {TIPO_ACO, TIPO_AGUA, 0.5}, {TIPO_ACO, TIPO_ELETRICO, 0.5}, {TIPO_ACO, TIPO_ACO, 0.5},
+
+    {TIPO_FADA, TIPO_LUTADOR, 2.0}, {TIPO_FADA, TIPO_DRAGAO, 2.0}, {TIPO_FADA, TIPO_SOMBRIO, 2.0},
+    {TIPO_FADA, TIPO_FOGO, 0.5}, {TIPO_FADA, TIPO_VENENOSO, 0.5}, {TIPO_FADA, TIPO_ACO, 0.5},
+};
+
+static const int TAMANHO_TABELA = sizeof(TABELA) / sizeof(Excecao);
+
+double Tipo_multiplicador(TipoPokemon atacante, TipoPokemon defensor) {
+    for (int i = 0; i < TAMANHO_TABELA; i++) {
+        if (TABELA[i].atacante == atacante && TABELA[i].defensor == defensor) {
+            return TABELA[i].mult;
+        }
+    }
+    return 1.0; // nao achou na tabela = neutro
+}
+
+double Tipo_multiplicador_combinado(TipoPokemon atacante, TipoPokemon def1, int tem_tipo2, TipoPokemon def2) {
+    double m = Tipo_multiplicador(atacante, def1);
+    if (tem_tipo2) m *= Tipo_multiplicador(atacante, def2);
+    return m;
+}
