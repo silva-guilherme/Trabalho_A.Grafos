@@ -15,6 +15,12 @@ pokémons e uma Equipe Rocket que rouba pokémons/insígnias.
 Todo o código é em C, sem bibliotecas externas de estrutura de dados -
 a lista de adjacência, o heap do Dijkstra, etc.
 
+## Links dos Videos
+   part1 : Guilherme - 
+   part2 : Ytallo -  
+   part3 : Lucas  - 
+
+
 ## Requisitos para compilar
 
 É preciso apenas de um compilador C (`gcc`) e do utilitário `make`. Nenhuma
@@ -148,7 +154,7 @@ soma de todos os pesos das arestas, como exigido no enunciado.
   número máximo de turnos para garantir término mesmo em situações onde
   nenhum dos lados consegue causar dano.
 
-## Requisitos do enunciado cobertos pela simulação
+## Requisitos cobertos pela simulação
 
 - Leitura do grafo ponderado e do cenário a partir de arquivo texto.
 - Movimentação **um vértice por vez** (`Treinador_dar_passo`), com encontros
@@ -203,18 +209,18 @@ enviada para o vértice mais distante do ponto do ataque (via Dijkstra).
 O enunciado exige que cada membro seja responsável por ao menos uma
 operação sobre o grafo/sua representação. Dividimos da seguinte forma:
 
-1. **Membro A — Grafo e movimentação**: `grafo.h/.c` (lista de adjacência,
+1. **Guilherme - Grafo e movimentação**: `grafo.h/.c` (lista de adjacência,
    Dijkstra com heap, reconstrução de caminho) + `config.h/.c` (leitura do
    arquivo) + a lógica de movimentação em `treinador.c` (`Treinador_dar_passo`).
-2. **Membro B — Pokémon e batalhas**: `pokemon.h/.c` (XP, evolução, HP,
+2. **Ytallo - Pokémon e batalhas**: `pokemon.h/.c` (XP, evolução, HP,
    estados) + `batalha.h/.c` (duelo, batalha 3x3, captura, aceite/desistência)
    + `tipos.h/.c` (vantagens de tipo).
-3. **Membro C — Treinador e simulação/itens extras**: `treinador.h/.c`
+3. **Lucas - Treinador e simulação/itens extras**: `treinador.h/.c`
    (time, ovos/incubadora, insígnias) + `item.h/.c` (ervas) + `rocket.h/.c`
    (Equipe Rocket) + `main.c` (orquestração da simulação, geração aleatória
    de entidades).
 
-Cada um de nós grava seu vídeo explicando a parte que implementou,
+Cada um de nós gravou um vídeo explicando a parte que implementou,
 detalhando as escolhas de estrutura de dados e complexidade dos algoritmos
 usados.
 
