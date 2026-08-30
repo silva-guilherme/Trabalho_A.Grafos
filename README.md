@@ -9,10 +9,10 @@ movem pelo grafo usando **Dijkstra com heap binário** para achar o caminho
 mais rápido até seus objetivos: capturar pokémons selvagens, treinar,
 desafiar líderes de ginásio e, por fim, se inscrever na Liga antes do prazo.
 Além da dinâmica principal (captura, evolução, XP, HP, batalhas 3x3), o
-projeto implementa dois itens extras do enunciado: vantagens de tipo entre
+projeto implementa dois itens extras : vantagens de tipo entre
 pokémons e uma Equipe Rocket que rouba pokémons/insígnias.
 
-Todo o código é em C puro, sem bibliotecas externas de estrutura de dados -
+Todo o código é em C, sem bibliotecas externas de estrutura de dados -
 a lista de adjacência, o heap do Dijkstra, etc.
 
 ## Requisitos para compilar
@@ -68,7 +68,7 @@ Se preferir não usar o WSL, dá para compilar nativamente no Windows com o
    normalmente. O executável gerado será `pokemon_liga.exe`.
 
 (Visual Studio sozinho não compila este projeto direto, pois o `Makefile` e
-o código assumem um compilador estilo gcc/Unix - use uma das duas opções
+o código assumem um compilador estilo gcc/Unix — use uma das duas opções
 acima.)
 
 ## Como compilar e executar
@@ -148,7 +148,7 @@ soma de todos os pesos das arestas, como exigido no enunciado.
   número máximo de turnos para garantir término mesmo em situações onde
   nenhum dos lados consegue causar dano.
 
-## Requisitos cobertos pela simulação
+## Requisitos do enunciado cobertos pela simulação
 
 - Leitura do grafo ponderado e do cenário a partir de arquivo texto.
 - Movimentação **um vértice por vez** (`Treinador_dar_passo`), com encontros
@@ -200,15 +200,85 @@ enviada para o vértice mais distante do ponto do ataque (via Dijkstra).
 
 ## Divisão entre os 3 integrantes do grupo
 
+O enunciado exige que cada membro seja responsável por ao menos uma
+operação sobre o grafo/sua representação. Dividimos da seguinte forma:
 
-1. **Guilherme — Grafo e movimentação**: `grafo.h/.c` (lista de adjacência,
+1. **Membro A — Grafo e movimentação**: `grafo.h/.c` (lista de adjacência,
    Dijkstra com heap, reconstrução de caminho) + `config.h/.c` (leitura do
    arquivo) + a lógica de movimentação em `treinador.c` (`Treinador_dar_passo`).
-2. **Ytallo — Pokémon e batalhas**: `pokemon.h/.c` (XP, evolução, HP,
+2. **Membro B — Pokémon e batalhas**: `pokemon.h/.c` (XP, evolução, HP,
    estados) + `batalha.h/.c` (duelo, batalha 3x3, captura, aceite/desistência)
    + `tipos.h/.c` (vantagens de tipo).
-3. **Lucas — Treinador e simulação/itens extras**: `treinador.h/.c`
+3. **Membro C — Treinador e simulação/itens extras**: `treinador.h/.c`
    (time, ovos/incubadora, insígnias) + `item.h/.c` (ervas) + `rocket.h/.c`
    (Equipe Rocket) + `main.c` (orquestração da simulação, geração aleatória
    de entidades).
 
+Cada um de nós grava seu vídeo explicando a parte que implementou,
+detalhando as escolhas de estrutura de dados e complexidade dos algoritmos
+usados.
+
+## Limitações conhecidas
+
+- A movimentação segue sempre o caminho mínimo (Dijkstra) até o próximo
+  objetivo (ginásio sem insígnia, PMC quando necessário, ou estádio). O
+  enunciado permite tanto líderes fixos quanto móveis; optamos por
+  deixá-los fixos no próprio ginásio, uma das opções válidas, para manter o
+  escopo mais simples.
+- Não implementamos um mecanismo de "pokébolas limitadas": o enunciado
+  descreve 7 pokébolas (6 para o time + 1 para captura), mas não
+  especifica que elas se esgotam; modelamos isso apenas pelo limite de 6
+  pokémons ativos, sem contador de pokébolas consumíveis.
+- O laço de simulação em `main.c` tem um número máximo de rodadas
+  (`MAX_RODADAS`) como salvaguarda. Nos mapas de exemplo, os líderes de
+  ginásio (propositalmente mais fortes, veja `forca_extra` em
+  `montar_time_fixo` dentro de `main.c`) tendem a vencer treinadores ainda
+  no nível inicial — isso é esperado: como líder e treinador ganham XP a
+  cada duelo (10 por vitória, 3 por derrota), quem começa na frente tende a
+  manter a vantagem por mais tempo. Testamos reduzir o bônus fixo do líder
+  (`forca_extra`, hoje 5) para algo como 2 e as insígnias ficam bem mais
+  alcançáveis dentro do prazo padrão, se quisermos ajustar a dificuldade.
+- As vantagens de tipo usam uma tabela baseada na franquia original, mas
+  simplificada.
+
+## Changelog (ajustes feitos durante os testes)
+
+- **XP de pokémon por batalha**: cada duelo agora dá +10 XP ao pokémon
+  vencedor e +3 ao perdedor (`Batalha_duelo_pokemon` em `batalha.c`), regra
+  que estava documentada no README mas não estava implementada — sem ela,
+  os pokémons nunca ganhavam XP de batalhas de ginásio/treinador (só de
+  captura e distância), o que travava a progressão indefinidamente.
+- **Vitória por W.O.**: se o oponente (líder de ginásio, outro treinador ou
+  alvo da Equipe Rocket) não consegue formar um time de 3 pokémons
+  conscientes, o desafiante agora vence automaticamente por W.O., em vez de
+  a batalha simplesmente não acontecer (o que antes fazia a Equipe Rocket
+  "perder" ao atacar um treinador já sem pokémons conscientes — o oposto do
+  esperado).
+- **Código morto removido**: `Treinador_viajar_ate` (função antiga,
+  substituída por `Treinador_dar_passo` quando a movimentação passou a ser
+  vértice a vértice) estava sem nenhuma chamada no projeto; foi removida de
+  `treinador.c`/`treinador.h`.
+- **Tratamento no PMC deixou de ser instantâneo**: agora leva um tempo
+  aleatório entre 10 e 50 unidades efetivamente parado no PMC
+  (`Pokemon_tratar_no_pmc` em `pokemon.c`), como pede o enunciado — antes,
+  qualquer pokémon "machucado" era curado na hora ao simplesmente passar
+  pelo vértice do PMC.
+- **Bônus de +1 AP/DP por vencer com XP ≥ do oponente** agora também se
+  aplica em capturas de pokémon selvagem (`Batalha_capturar_selvagem`), não
+  só em batalhas de treinador — o enunciado não restringe essa regra a um
+  tipo específico de disputa.
+- **Bônus de AP/DP igual ao XP do treinador**: implementada a regra "cada
+  pokémon recebe AP's e DP's a mais que os XP's de seu treinador" durante
+  disputas entre pokémons de treinadores diferentes (`bonus_treinador_ap`/
+  `bonus_treinador_dp` em `pokemon.h`, aplicado e zerado a cada batalha em
+  `Batalha_treinador_vs_treinador`). Não se aplica a pokémons selvagens
+  (sem treinador).
+- **Treinador com time incompleto ficava preso indo ao PMC pra sempre**: a
+  condição de destino tratava "só tenho 1-2 pokémons" exatamente igual a
+  "tenho 3+ mas alguns feridos", mandando o treinador pro PMC sem nenhum
+  benefício (ele já estava saudável, só faltava pokémon no time). Ele nunca
+  saía dali para explorar e capturar selvagens. Agora esses dois casos são
+  tratados separadamente em `main.c`: com menos de 3 pokémons no time, o
+  treinador explora vértices aleatórios da região (onde há selvagens/itens)
+  em vez de ir ao PMC; só quando já tem 3+ pokémons e alguns machucados é
+  que a rota volta a ser o PMC.
