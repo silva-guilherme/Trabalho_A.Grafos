@@ -247,7 +247,7 @@ usados.
 - As vantagens de tipo usam uma tabela baseada na franquia original, mas
   simplificada.
 
-## Changelog (ajustes feitos durante os testes)
+## Aajustes feitos durante os testes
 
 - **XP de pokémon por batalha**: cada duelo agora dá +10 XP ao pokémon
   vencedor e +3 ao perdedor (`Batalha_duelo_pokemon` em `batalha.c`), regra
