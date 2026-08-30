@@ -77,9 +77,9 @@ void Grafo_imprimir(Grafo* g) {
 
 
 typedef struct {
-    int* vertice;   /* heap[i] = vertice armazenado na posicao i */
-    int* posicao;   /* posicao[v] = indice do vertice v dentro do heap (-1 se ja removido) */
-    int* dist;      /* distancia atual usada como chave de prioridade */
+    int* vertice;  
+    int* posicao;  
+    int* dist;      
     int tamanho;
 } MinHeap;
 
@@ -146,7 +146,7 @@ int* Grafo_dijkstra(Grafo* g, int origem, int* anterior) {
 
     while (!heap_vazio(&h)) {
         int u = heap_extrair_min(&h);
-        if (dist[u] == INT_MAX) continue; /* restante inalcancavel */
+        if (dist[u] == INT_MAX) continue; 
 
         Aresta* a = g->vertices[u].inicio;
         while (a != NULL) {
@@ -179,7 +179,7 @@ int* Grafo_reconstruir_caminho(int* anterior, int origem, int destino, int* tama
         if (atual == origem) break;
         atual = anterior[atual];
     }
-    /* inverte para ficar origem -> ... -> destino */
+    
     int* caminho = (int*)malloc(n * sizeof(int));
     for (int i = 0; i < n; i++) caminho[i] = pilha[n - 1 - i];
     free(pilha);

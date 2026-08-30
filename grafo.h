@@ -12,7 +12,7 @@ typedef enum {
 
 typedef struct Aresta {
     int destino;
-    int peso;              /* tempo de percurso */
+    int peso;              
     struct Aresta* prox;
     struct Aresta* ant;
 } Aresta;
@@ -20,18 +20,21 @@ typedef struct Aresta {
 typedef struct Vertice {
     Aresta* inicio;
     TipoVertice tipo;
-    char nome_ginasio[50];  /* usado somente se tipo == GINASIO */
-    int indice_insignia;    /* usado somente se tipo == GINASIO: posicao no vetor de insignias do treinador */
+    char nome_ginasio[50];  
+    int indice_insignia;   
 } Vertice;
 
 typedef struct Grafo {
     int num_vertices;
     int num_ginasios;
     Vertice* vertices;
-    long soma_pesos;        /* soma de todos os pesos das arestas (usada para calcular o prazo de inscricao) */
+    long soma_pesos;        
 } Grafo;
 
 Grafo* Grafo_criar(int num_vertices);
+
+
+
 
 
 void Grafo_adicionar_aresta(Grafo* g, int origem, int destino, int peso);
@@ -45,7 +48,9 @@ void Grafo_imprimir(Grafo* g);
 
 int* Grafo_dijkstra(Grafo* g, int origem, int* anterior);
 
+
 int* Grafo_reconstruir_caminho(int* anterior, int origem, int destino, int* tamanho);
+
 
 int Grafo_vertice_mais_distante(Grafo* g, int origem);
 
