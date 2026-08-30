@@ -5,6 +5,7 @@ void Item_usar(Treinador* t, ItemErva* item) {
     if (item->coletado) return;
     item->coletado = 1;
 
+    // cura +10 hp so quem ta consciente
     int quantos = 0;
     for (int i = 0; i < t->num_pokemons; i++) {
         if (t->pokemons[i]->estado == CONSCIENTE) {
