@@ -13,7 +13,7 @@ Treinador* Treinador_criar(const char* nome, int vertice_inicial, int num_ginasi
     t->tem_ovo = 0;
     t->ovo = NULL;
     t->ovo_progresso = 0;
-    t->pokebolas_disponiveis = 1; /* 1 pokebola livre para novas capturas; as outras 6 sao "slots" do time */
+    t->pokebolas_disponiveis = 1;
     t->num_ginasios = num_ginasios;
     t->insignias = (int*)calloc(num_ginasios > 0 ? num_ginasios : 1, sizeof(int));
     t->num_insignias_conquistadas = 0;
@@ -23,7 +23,7 @@ Treinador* Treinador_criar(const char* nome, int vertice_inicial, int num_ginasi
 
 int Treinador_adicionar_pokemon(Treinador* t, Pokemon* p) {
     if (t->num_pokemons >= MAX_POKEMONS_ATIVOS) {
-        /* Time cheio: pokemon excedente vai para estudos do Prof. Carvalho */
+        // time cheio, vai pro professor
         printf("  [Prof. Carvalho] %s ja tem 6 pokemons; %s foi enviado para estudos.\n", t->nome, p->nome);
         Pokemon_liberar(p);
         return 0;
@@ -34,8 +34,7 @@ int Treinador_adicionar_pokemon(Treinador* t, Pokemon* p) {
 }
 
 int Treinador_encontrar_ovo(Treinador* t, EspeciePokemon* especie_oculta, int ap, int dp) {
-    /* So pode carregar um ovo nao-eclodido por vez, e o total (ativos + ovo)
-     * nao pode passar de 7. */
+    // só 1 ovo por vez e total (ativos + ovo) nao pode passar de 7
     if (t->tem_ovo) return 0;
     if (t->num_pokemons >= MAX_POKEMONS_ATIVOS + 1) return 0;
 
@@ -76,44 +75,10 @@ int Treinador_escolher_3_para_batalha(const Treinador* t, int indices_saida[3]) 
     return achados == 3;
 }
 
-int Treinador_viajar_ate(Treinador* t, Grafo* g, int destino) {
-    if (t->vertice_atual == destino) return 0;
-
-    int* anterior = (int*)malloc(g->num_vertices * sizeof(int));
-    int* dist = Grafo_dijkstra(g, t->vertice_atual, anterior);
-    int tamanho;
-    int* caminho = Grafo_reconstruir_caminho(anterior, t->vertice_atual, destino, &tamanho);
-
-    int tempo_total = 0;
-    if (caminho != NULL) {
-        /* percorre o caminho vertice a vertice (um por vez), acumulando o
-         * tempo (peso) de cada aresta percorrida */
-        for (int i = 0; i + 1 < tamanho; i++) {
-            int u = caminho[i], v = caminho[i + 1];
-            Aresta* a = g->vertices[u].inicio;
-            int peso_aresta = 0;
-            while (a != NULL) { if (a->destino == v) { peso_aresta = a->peso; break; } a = a->prox; }
-            tempo_total += peso_aresta;
-        }
-        t->vertice_atual = destino;
-        free(caminho);
-    }
-    free(dist);
-    free(anterior);
-
-    /* efeitos do tempo percorrido sobre o time */
-    for (int i = 0; i < t->num_pokemons; i++) {
-        Pokemon_recuperar_hp_por_tempo(t->pokemons[i], tempo_total);
-        Pokemon_xp_por_distancia(t->pokemons[i], tempo_total);
-    }
-    Treinador_avancar_ovo(t, tempo_total);
-
-    return tempo_total;
-}
-
 int Treinador_dar_passo(Treinador* t, Grafo* g, int destino) {
     if (t->vertice_atual == destino) return 0;
 
+    // recalcula o caminho toda vez (o mapa é pequeno, nao pesa)
     int* anterior = (int*)malloc(g->num_vertices * sizeof(int));
     int* dist = Grafo_dijkstra(g, t->vertice_atual, anterior);
     int tamanho;
@@ -121,6 +86,7 @@ int Treinador_dar_passo(Treinador* t, Grafo* g, int destino) {
 
     int tempo_passo = 0;
     if (caminho != NULL && tamanho > 1) {
+        // só avança pro proximo vertice do caminho, nao pro destino final direto
         int atual = caminho[0], proximo = caminho[1];
         Aresta* a = g->vertices[atual].inicio;
         while (a != NULL) { if (a->destino == proximo) { tempo_passo = a->peso; break; } a = a->prox; }
@@ -130,7 +96,6 @@ int Treinador_dar_passo(Treinador* t, Grafo* g, int destino) {
     free(dist);
     free(anterior);
 
-    /* efeitos do tempo percorrido nesta unica aresta */
     for (int i = 0; i < t->num_pokemons; i++) {
         Pokemon_recuperar_hp_por_tempo(t->pokemons[i], tempo_passo);
         Pokemon_xp_por_distancia(t->pokemons[i], tempo_passo);
