@@ -1,0 +1,34 @@
+# ============================================================
+# Mapa de exemplo da regiao "Rumo a Liga Pokemon"
+# Linhas comecando com '#' sao comentarios e sao ignoradas.
+# ============================================================
+
+NUM_VERTICES 6
+NUM_ARESTAS 6
+# origem destino peso(tempo) -- cada linha e adicionada nas DUAS direcoes
+0 1 15
+1 2 20
+1 4 10
+4 5 25
+2 3 12
+3 5 18
+
+# Pontos especiais do mapa
+LABORATORIO 0
+PMC 3
+ESTADIO 5
+NUM_GINASIOS 2
+GINASIO 2 Pedra
+GINASIO 4 Agua
+
+# Especies / linhas evolutivas: Fase1,Fase2,Fase3|TIPO1/TIPO2 (use '-' para fase inexistente)
+NUM_ESPECIES 4
+Bulbasaur,Ivysaur,Venusaur|GRAMA/VENENOSO
+Charmander,Charmeleon,Charizard|FOGO
+Squirtle,Wartortle,Blastoise|AGUA
+Pidgey,Pidgeotto,-|NORMAL/VOADOR
+
+# Quantidade de entidades espalhadas pela regiao
+NUM_POKEMONS 4
+NUM_TREINADORES 2
+NUM_ITENS 3

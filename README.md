@@ -16,9 +16,9 @@ Todo o código é em C, sem bibliotecas externas de estrutura de dados -
 a lista de adjacência, o heap do Dijkstra, etc.
 
 ## Links dos Videos
-   part1 : Guilherme - 
+   part1 : Guilherme - https://drive.google.com/file/d/1D2pn8E5FgVXdfr6gik6e2kwqgwmS564n/view?usp=sharing
    part2 : Ytallo -  
-   part3 : Lucas  - 
+   part3 : Lucas  - https://drive.google.com/file/d/1FtV3TgiFlQhfHgehP6n3N61sV-WysNa2/view?usp=sharing
 
 
 ## Requisitos para compilar
@@ -144,7 +144,7 @@ soma de todos os pesos das arestas, como exigido no enunciado.
 
 ## Complexidade dos algoritmos
 
-- **Dijkstra com heap binário**: O((V + E) log V) — usado para calcular o
+- **Dijkstra com heap binário**: O((V + E) log V) - usado para calcular o
   caminho mínimo (tempo) de um treinador até seu próximo destino (ginásio,
   PMC ou estádio) e para achar o vértice mais distante (Equipe Rocket).
   Preferido a uma busca linear ingênua O(V²) por ser assintoticamente melhor
@@ -247,7 +247,7 @@ usados.
 - As vantagens de tipo usam uma tabela baseada na franquia original, mas
   simplificada.
 
-## Aajustes feitos durante os testes
+## Ajustes feitos durante os testes
 
 - **XP de pokémon por batalha**: cada duelo agora dá +10 XP ao pokémon
   vencedor e +3 ao perdedor (`Batalha_duelo_pokemon` em `batalha.c`), regra

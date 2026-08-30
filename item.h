@@ -2,7 +2,7 @@
 #define ITEM_H
 #include "treinador.h"
 
-// item simples: erva que cura o time. da pra criar outros tipos aqui depois
+// item simples: erva que cura o time.
 typedef struct ItemErva {
     int vertice;
     int coletado;
